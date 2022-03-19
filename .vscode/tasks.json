@@ -1,0 +1,44 @@
+{
+    // See https://go.microsoft.com/fwlink/?LinkId=733558 
+    // for the documentation about the tasks.json format
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "type": "shell",
+            "label": "g++.exe build active file",
+            "command": "C:\\msys64\\mingw64\\bin\\g++.exe",
+            "args": [
+                "-g",
+                "${file}",
+                "-o",
+                "${fileDirname}\\${fileBasenameNoExtension}.exe",
+                "-I","C:\\opencv\\OpenCV-MinGW-Build-OpenCV-4.5.5-x64\\include",
+                "-L","C:\\opencv\\OpenCV-MinGW-Build-OpenCV-4.5.5-x64\\x64\\mingw\\bin",                
+                "-llibopencv_calib3d455",
+                "-llibopencv_core455",
+                "-llibopencv_dnn455",
+                "-llibopencv_features2d455",
+                "-llibopencv_flann455",
+                "-llibopencv_highgui455",
+                "-llibopencv_imgcodecs455",
+                "-llibopencv_imgproc455",
+                "-llibopencv_ml455",
+                "-llibopencv_objdetect455",
+                "-llibopencv_photo455",
+                "-llibopencv_stitching455",
+                "-llibopencv_video455",
+                "-llibopencv_videoio455"
+            ],
+            "options": {
+                "cwd": "C:\\msys64\\mingw64\\bin"
+            },
+            "problemMatcher": [
+                "$gcc"
+            ],
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            }
+        }
+    ]
+}

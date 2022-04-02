@@ -1,3 +1,7 @@
+/*
+    Author: Vittorio Esposito
+*/
+
 #include <iostream>
 #include <stdio.h>
 #include <opencv2/highgui/highgui.hpp>
@@ -46,15 +50,27 @@ void showHistogram(std::vector<cv::Mat> &hists)
     }
 }
 
-int main(int argc, char **argv)
+int main(int argc, char *argv[])
 {
     cout << "Lab2 is running" << endl;
 
-    // Loads the image
+    // 1. Loads an image (e.g., one of the provided images like “barbecue.jpg” or “countryside.jpg”)
     Mat inputImage = imread("./data/barbecue.png");
 
     if (!inputImage.data)
         return 1;
+
+    const char *inputWnd = "Input image";
+    namedWindow(inputWnd);
+    imshow(inputWnd, inputImage);
+    cout << "Showing the input image. Close the image(s) to continue..." << endl;
+    waitKey(0);
+
+    /*
+    2. Prints the histograms of the image. You must compute 3 histograms, one for each channel (i.e., R, G and B)
+    with 256 bins and [0, 255] as range. Notice that you need to use the calcHist() function separately on the 3 channels.
+    You can use the provided function (in the “show_histogram_function.cpp” file) to visualize the data.
+    */
 
     vector<Mat> histograms;
 
@@ -74,7 +90,81 @@ int main(int argc, char **argv)
 
     vector<Mat> outputHistogram{blueHistogram, greenHistogram, redHistogram};
     showHistogram(outputHistogram);
-        waitKey(0);
+    cout << "Showing the histograms of the image. Close the image(s) to continue..." << endl;
+    waitKey(0);
 
+    // 3. Equalizes separately the R, G and B channels by using cv::equalizeHist().
+    equalizeHist(histograms[0], blueHistogram);
+    equalizeHist(histograms[1], greenHistogram);
+    equalizeHist(histograms[2], redHistogram);
+
+    // 4. Shows the equalized image and the histogram of its channels.
+
+    vector<Mat> equalizedHistograms{blueHistogram, greenHistogram, redHistogram};
+    Mat equalizedImage;
+
+    // Merge equalizedHistograms to make a single multi-channel array equalizedImage
+    merge(equalizedHistograms, equalizedImage);
+
+    const char *equalizedWnd = "Equalized Image";
+    namedWindow(equalizedWnd);
+    imshow(equalizedWnd, equalizedImage);
+    cout << "Showing the equalized image. Close the image(s) to continue..." << endl;
+    waitKey(0);
+
+    calcHist(&equalizedHistograms[0], 1, 0, Mat(), blueHistogram, 1, &histSize, &histRange, true, false);
+    calcHist(&equalizedHistograms[1], 1, 0, Mat(), greenHistogram, 1, &histSize, &histRange, true, false);
+    calcHist(&equalizedHistograms[2], 1, 0, Mat(), redHistogram, 1, &histSize, &histRange, true, false);
+    
+    outputHistogram = {blueHistogram, greenHistogram, redHistogram};
+    showHistogram(outputHistogram);
+    cout << "Showing the histograms of the equalized image. Close the image(s) to continue..." << endl;
+    waitKey(0);
+
+    /*
+    5. Notice the artifacts produced by this approach.
+    To obtain a better equalization than the one of point 4, convert the image to
+    a different color space, e.g. Lab (use cv::cvtColor() with COLOR_BGR2Lab as color space conversion code),
+    and equalize only the luminance (L) channel.
+    */
+
+   // Convert the image to Lab color space
+   	Mat convertedImage;
+	cvtColor(inputImage, convertedImage, COLOR_BGR2Lab);
+
+    // Split as before
+	vector<Mat> histogramsLab;
+	split(convertedImage, histogramsLab);
+    
+    // equalize only the luminance (L) channel
+    Mat luminanceHistogram;
+    equalizeHist(histogramsLab[0], histogramsLab[0]);
+
+    merge(histogramsLab, convertedImage);
+	cvtColor(convertedImage, convertedImage, COLOR_Lab2BGR);
+
+    const char *equalizedLumWnd = "Equalized image (luminance only)";
+    namedWindow(equalizedLumWnd);
+    imshow(equalizedLumWnd, convertedImage);
+    cout << "Showing the equalized image (luminance only). Close the image(s) to continue..." << endl;
+    waitKey(0);
+
+    split(convertedImage, equalizedHistograms);
+    calcHist(&equalizedHistograms[0], 1, 0, Mat(), blueHistogram, 1, &histSize, &histRange, true, false);
+    calcHist(&equalizedHistograms[1], 1, 0, Mat(), greenHistogram, 1, &histSize, &histRange, true, false);
+    calcHist(&equalizedHistograms[2], 1, 0, Mat(), redHistogram, 1, &histSize, &histRange, true, false);
+    outputHistogram = {blueHistogram, greenHistogram, redHistogram};
+    showHistogram(outputHistogram);
+    cout << "Showing the histograms of the equalized image (luminance only). Close the image(s) to continue..." << endl;
+    waitKey(0);
+
+    /*
+
+    Generate a denoised version of the image. You should try different filters and parameter values.
+        • Write a program that performs the filtering and shows the result.
+        • Table 1 specifies the requested filters to test and the parameters to be set for each filter.
+        • You can simply pass the filter parameters from the command line
+
+    */
     return 0;
 }

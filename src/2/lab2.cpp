@@ -4,9 +4,9 @@
 
 #include <iostream>
 #include <stdio.h>
-#include <opencv2/highgui/highgui.hpp>
+#include "opencv2/highgui/highgui.hpp"
 #include "opencv2/imgproc/imgproc.hpp"
-#include <opencv2/opencv.hpp>
+#include "opencv2/opencv.hpp"
 #include "opencv2/imgcodecs.hpp"
 
 using namespace std;
@@ -139,10 +139,10 @@ int main(int argc, char *argv[])
         return 1;
 
     const char *inputWnd = "Input image";
-    // namedWindow(inputWnd);
-    //  imshow(inputWnd, inputImage);
+    namedWindow(inputWnd);
+    imshow(inputWnd, inputImage);
     cout << "Showing the input image. Close the image(s) to continue..." << endl;
-    // waitKey(0);
+    waitKey(0);
 
     /*
     2. Prints the histograms of the image. You must compute 3 histograms, one for each channel (i.e., R, G and B)
@@ -167,9 +167,9 @@ int main(int argc, char *argv[])
     calcHist(&histograms[2], 1, 0, Mat(), redHistogram, 1, &histSize, &histRange, true, false);
 
     vector<Mat> outputHistogram{blueHistogram, greenHistogram, redHistogram};
-    // showHistogram(outputHistogram);
+    showHistogram(outputHistogram);
     cout << "Showing the histograms of the image. Close the image(s) to continue..." << endl;
-    // waitKey(0);
+    waitKey(0);
 
     // 3. Equalizes separately the R, G and B channels by using cv::equalizeHist().
     equalizeHist(histograms[0], blueHistogram);
@@ -185,19 +185,19 @@ int main(int argc, char *argv[])
     merge(equalizedHistograms, equalizedImage);
 
     const char *equalizedWnd = "Equalized Image";
-    // namedWindow(equalizedWnd);
-    //  imshow(equalizedWnd, equalizedImage);
+    namedWindow(equalizedWnd);
+    imshow(equalizedWnd, equalizedImage);
     cout << "Showing the equalized image. Close the image(s) to continue..." << endl;
-    // waitKey(0);
+    waitKey(0);
 
     calcHist(&equalizedHistograms[0], 1, 0, Mat(), blueHistogram, 1, &histSize, &histRange, true, false);
     calcHist(&equalizedHistograms[1], 1, 0, Mat(), greenHistogram, 1, &histSize, &histRange, true, false);
     calcHist(&equalizedHistograms[2], 1, 0, Mat(), redHistogram, 1, &histSize, &histRange, true, false);
 
     outputHistogram = {blueHistogram, greenHistogram, redHistogram};
-    // showHistogram(outputHistogram);
+    showHistogram(outputHistogram);
     cout << "Showing the histograms of the equalized image. Close the image(s) to continue..." << endl;
-    // waitKey(0);
+    waitKey(0);
 
     /*
     5. Notice the artifacts produced by this approach.
@@ -222,19 +222,19 @@ int main(int argc, char *argv[])
     cvtColor(convertedImage, convertedImage, COLOR_Lab2BGR);
 
     const char *equalizedLumWnd = "Equalized image (luminance only)";
-    // namedWindow(equalizedLumWnd);
-    //  imshow(equalizedLumWnd, convertedImage);
+    namedWindow(equalizedLumWnd);
+    imshow(equalizedLumWnd, convertedImage);
     cout << "Showing the equalized image (luminance only). Close the image(s) to continue..." << endl;
-    // waitKey(0);
+    waitKey(0);
 
     split(convertedImage, equalizedHistograms);
     calcHist(&equalizedHistograms[0], 1, 0, Mat(), blueHistogram, 1, &histSize, &histRange, true, false);
     calcHist(&equalizedHistograms[1], 1, 0, Mat(), greenHistogram, 1, &histSize, &histRange, true, false);
     calcHist(&equalizedHistograms[2], 1, 0, Mat(), redHistogram, 1, &histSize, &histRange, true, false);
     outputHistogram = {blueHistogram, greenHistogram, redHistogram};
-    // showHistogram(outputHistogram);
+    showHistogram(outputHistogram);
     cout << "Showing the histograms of the equalized image (luminance only). Close the image(s) to continue..." << endl;
-    // waitKey(0);
+    waitKey(0);
 
     // ***** PART 2 *****
 

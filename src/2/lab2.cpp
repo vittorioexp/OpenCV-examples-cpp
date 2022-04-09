@@ -126,17 +126,12 @@ void bilateralFilterSigmaSpaceCallaback(int pos, void *inputImage)
     imshow("Bilateral filtering", outputImage);
 }
 
-int main(int argc, char *argv[])
+Mat equalization()
 {
-    cout << "Lab2 is running" << endl;
-
     // ***** PART 1 *****
 
     // 1. Loads an image (e.g., one of the provided images like “barbecue.jpg” or “countryside.jpg”)
     Mat inputImage = imread("./data/barbecue.png");
-
-    if (!inputImage.data)
-        return 1;
 
     const char *inputWnd = "Input image";
     namedWindow(inputWnd);
@@ -236,6 +231,11 @@ int main(int argc, char *argv[])
     cout << "Showing the histograms of the equalized image (luminance only). Close the image(s) to continue..." << endl;
     waitKey(0);
 
+    return convertedImage;
+}
+
+void filtering(Mat &convertedImage)
+{
     // ***** PART 2 *****
 
     /*
@@ -276,6 +276,17 @@ int main(int argc, char *argv[])
     createTrackbar("S range", bilateralFilterWnd, &blur, 70, bilateralFilterSigmaRangeCallaback, (void *)&convertedImage);
 
     waitKey(0);
+}
+
+int main(int argc, char *argv[])
+{
+    cout << "Lab2 is running" << endl;
+
+    // Lab 2 - part 1
+    Mat equalizedImage = equalization();
+
+    // Lab 2 - part 2
+    filtering(equalizedImage);
 
     return 0;
 }

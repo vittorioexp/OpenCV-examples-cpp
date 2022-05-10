@@ -18,6 +18,8 @@ using namespace cv;
 
 vector<vector<KeyPoint>> kp;
 vector<Mat> descr;
+vector<vector<Point2f>> srcCoords;
+vector<vector<Point2f>> dstCoords;
 
 // Returns all images located in @basePath
 vector<Mat> loadImages(String basePath)
@@ -135,10 +137,45 @@ void showMatches(vector<vector<DMatch>> matches, vector<Mat> images)
     for (int i = 0; i < matches.size(); i++)
     {
         Mat tmp;
-        drawMatches(images[i], kp[i], images[i+1], kp[i+1], matches[i], tmp);
+        drawMatches(images[i], kp[i], images[i + 1], kp[i + 1], matches[i], tmp);
         imshow("", tmp);
         waitKey(0);
     }
+}
+
+// Finds the transform between matched keypoints
+vector<Mat> findHomographies(vector<vector<DMatch>> matches)
+{
+    int size = kp.size() - 1;
+
+    srcCoords.resize(size);
+    dstCoords.resize(size);
+    vector<Mat> homographies(size);
+
+    for (int i = 0; i < size; i++)
+    {
+        vector<KeyPoint> kp1 = kp[i];
+        vector<KeyPoint> kp2 = kp[i + 1];
+        vector<DMatch> tmpMatches = matches[i];
+
+        vector<Point2f> obj;
+        vector<Point2f> scene;
+        vector<Point2f> mask;
+
+        for (int j = 0; j < tmpMatches.size(); j++)
+        {
+            // Get the keypoints from the matches
+            obj.push_back(kp1[tmpMatches[j].queryIdx].pt);
+            scene.push_back(kp2[tmpMatches[j].trainIdx].pt);
+        }
+
+        if (obj.size() > 0 && scene.size() > 0)
+            homographies[i] = findHomography(obj, scene, RANSAC);
+
+        srcCoords[i] = obj;
+        dstCoords[i] = scene;
+    }
+    return homographies;
 }
 
 int main(int argc, char *argv[])
@@ -161,9 +198,13 @@ int main(int argc, char *argv[])
     // Feature matching
     cout << "Finding matches" << endl;
     vector<vector<DMatch>> matches = findMatches(5);
-    showMatches(matches, images);
+    // showMatches(matches, images);
 
-    // Image matching - RANSAC
+    // Image matching - RANSACF
+    vector<Mat> homographies = findHomographies(matches);
+    cout << "done" << endl;
+
+    
 
     // Global alignment
 

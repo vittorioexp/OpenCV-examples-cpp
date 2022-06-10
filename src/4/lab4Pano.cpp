@@ -265,26 +265,26 @@ void performStitching()
         tmpDimX = tmpDimX + meanDistanceSrc[i] - meanDistanceDst[i];
     }
 
-    tmpDimX = tmpDimX + images[images.size() - 1].cols;
+    tmpDimX += images[images.size() - 1].cols;
     int tmpDimY = images[images.size() - 1].rows;
 
-    Mat outputMat(tmpDimY*1.1, tmpDimX*1.1, CV_8UC1, Scalar(0));
-    images[0](Rect(0, 0, meanDistanceSrc[0], images[0].rows)).copyTo(outputMat(Rect(0, 0, meanDistanceSrc[0], images[0].rows)));
+    Mat tmpStitchedImage(tmpDimY*1.1, tmpDimX*1.1, CV_8UC1, Scalar(0));
+    images[0](Rect(0, 0, meanDistanceSrc[0], images[0].rows)).copyTo(tmpStitchedImage(Rect(0, 0, meanDistanceSrc[0], images[0].rows)));
 
     for (int i = 0; i < images.size() - 2; i++)
     {
         Mat tmpImg = images[i + 1];
-        tmpImg(Rect(meanDistanceDst[i], 0, tmpImg.cols - meanDistanceDst[i], tmpImg.rows)).copyTo(outputMat(Rect(tmpSum[i], 0, tmpImg.cols - meanDistanceDst[i], tmpImg.rows)));
+        tmpImg(Rect(meanDistanceDst[i], 0, tmpImg.cols - meanDistanceDst[i], tmpImg.rows)).copyTo(tmpStitchedImage(Rect(tmpSum[i], 0, tmpImg.cols - meanDistanceDst[i], tmpImg.rows)));
     }
 
     int col = images[images.size() - 1].cols - meanDistanceDst[images.size() - 2];
     int row = images[images.size() - 1].rows;
-    images[images.size() - 1](Rect(meanDistanceDst[images.size() - 2], 0, col, row)).copyTo(outputMat(Rect(tmpSum[images.size() - 2], 0, col, row)));
+    images[images.size() - 1](Rect(meanDistanceDst[images.size() - 2], 0, col, row)).copyTo(tmpStitchedImage(Rect(tmpSum[images.size() - 2], 0, col, row)));
 
-    // cvtColor(outputMat, outputMat, COLOR_BGR2GRAY);
-    equalizeHist(outputMat, outputMat);
+    // cvtColor(tmpStitchedImage, tmpStitchedImage, COLOR_BGR2GRAY);
+    equalizeHist(tmpStitchedImage, tmpStitchedImage);
 
-    stitchedImage = outputMat.clone();
+    stitchedImage = tmpStitchedImage.clone();
 }
 
 int main(int argc, char *argv[])

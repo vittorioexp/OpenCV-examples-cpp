@@ -579,17 +579,19 @@ int main(int argc, char *argv[])
     cout << "Lab4 is running - image stitching" << endl;
 
     cout << "Loading images" << endl;
-    loadInputImages("./data/T3/");
+    loadInputImages("./data/RT3/");
 
-    cout << "Resize images" << endl;
+    // Optional resizing
+    // cout << "Resize images" << endl;
     // resizeInputImages(500);
 
-    cout << "Performing blurring on input images" << endl;
-    for (int i = 0; i < 3; i++)
-        for (int j = 0; j < 3; j++)
-            ;
+    // Optional initial blurring for further noise remuval
+    // cout << "Performing blurring on input images" << endl;
+    // for (int i = 0; i < 3; i++)
+    //     for (int j = 0; j < 3; j++)
+    //         ;
     // GaussianBlur(images[i][j], images[i][j], Size(5, 5), 10.0, 10.0); // 5. 10.0
-    //  bilateralFilter(images[i][j], images[i][j], 6*6.0, 0.1, 6.0);
+    // bilateralFilter(images[i][j], images[i][j], 6*6.0, 0.1, 6.0);
     // images[i][j] = performBilateralFiltering(images[i][j], 0.25, 6.0);
 
     cout << "Performing cylindrical projection on the input images" << endl;
@@ -643,12 +645,13 @@ int main(int argc, char *argv[])
     outputImage = performRowStitching(0, stitchedImages);
     rotateStitchedImages(true);
 
+    // Optional blurring
     // GaussianBlur(outputImage, outputImage, Size(3, 3), 5.0, 5.0);
     equalizeHist(outputImage, outputImage);
 
     imwrite("outputImage.jpg", outputImage);
-    // imshow("", outputImage);
-    // waitKey(0);
+    imshow("", outputImage);
+    waitKey(0);
 
     cout << "Done" << endl;
     return 0;
